@@ -335,9 +335,9 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:700;line-height:1.02;letter-s
 .lista{border-top:1px solid var(--line);}
 .lin{
   position:relative;display:grid;
-  grid-template-columns:44px minmax(140px,1.15fr) minmax(0,1.5fr) auto auto 40px;
-  align-items:center;gap:clamp(12px,2vw,26px);
-  padding:clamp(15px,1.9vw,22px) 0;border-bottom:1px solid var(--line);
+  grid-template-columns:112px 30px minmax(120px,1fr) minmax(0,1.2fr) auto auto 40px;
+  align-items:center;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(12px,1.5vw,16px) 0;border-bottom:1px solid var(--line);
   cursor:pointer;transition:padding-left .45s var(--ease),background .35s;
 }
 .lin::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:var(--pill);
@@ -381,12 +381,24 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:700;line-height:1.02;letter-s
 
 /* selo de destaque, discreto, dentro da linha */
 .lista.semselo .sel{display:none;}
-.lin .sel{position:absolute;left:44px;top:calc(clamp(15px,1.9vw,22px) - 12px);
+.lin .sel{position:absolute;left:126px;top:calc(clamp(12px,1.5vw,16px) - 11px);
   font-size:.5rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ember-2);opacity:.9;}
 
-/* miniatura só no celular */
-.lin .mini{display:none;}
+/* miniatura sempre visível — a foto não depende do mouse */
+.lin .mini{display:block;width:112px;height:78px;border-radius:var(--r-sm);overflow:hidden;
+  background:#0e0e11;position:relative;flex:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);}
+.lin .mini img{width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--ease),filter .4s;}
+.lin:hover .mini img,.lin.viva .mini img{transform:scale(1.08);}
+.lin .mini::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  box-shadow:inset 0 0 0 1px transparent;transition:box-shadow .35s;}
+.lin:hover .mini::after,.lin.viva .mini::after{box-shadow:inset 0 0 0 1px var(--line-hot);}
+/* contador de fotos no canto da miniatura */
+.lin .mini b{position:absolute;right:5px;bottom:5px;z-index:2;padding:2px 7px;border-radius:var(--pill);
+  background:rgba(5,5,6,.78);font-size:.56rem;font-weight:500;color:var(--bone);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
 
 .vazio{padding:76px 10px;text-align:center;border-bottom:1px solid var(--line);}
 .vazio b{display:block;font-family:var(--display);font-weight:700;font-size:1.5rem;margin-bottom:10px;}
@@ -721,6 +733,10 @@ select.fld option{background:#16161a;color:var(--bone);}
 @media (max-width:1240px){
   :root{--rail:216px;}
   .rnav a{font-size:1.08rem;}
+  .lin{grid-template-columns:100px 28px minmax(120px,1fr) auto auto 40px;}
+  .lin .mini{width:100px;height:70px;}
+  .lin .ver{display:none;}
+  .lin .sel{left:112px;}
 }
 
 @media (max-width:1080px){
@@ -756,15 +772,16 @@ select.fld option{background:#16161a;color:var(--bone);}
   .fgrid{grid-template-columns:1fr 1fr;}
   .f.c3{grid-column:span 2;}
   .pe-g{grid-template-columns:1fr 1fr;}
-  .lin{grid-template-columns:34px minmax(0,1fr) auto;row-gap:8px;
-    grid-template-areas:"ix nom pre" ". dad go";}
-  .lin .ix{grid-area:ix;}
+  .lin{grid-template-columns:104px minmax(0,1fr) auto;row-gap:8px;column-gap:16px;
+    grid-template-areas:"mini nom pre" "mini dad go";align-items:center;}
+  .lin .mini{grid-area:mini;width:104px;height:74px;}
+  .lin .ix{display:none;}
   .lin .nom{grid-area:nom;}
   .lin .ver{display:none;}
   .lin .dad{grid-area:dad;}
   .lin .pre{grid-area:pre;}
   .lin .go{grid-area:go;}
-  .lin .sel{left:34px;top:2px;}
+  .lin .sel{left:120px;top:0;}
   .conta{margin-left:0;width:100%;}
 }
 
@@ -777,14 +794,18 @@ select.fld option{background:#16161a;color:var(--bone);}
   .vm-box{border-radius:0;max-height:100vh;height:100%;}
   .vi-p{text-align:left;}
   .faixa-in{flex-direction:column;align-items:flex-start;}
-  /* na tela pequena a linha ganha miniatura, já que não há prévia */
-  .lin{grid-template-columns:58px minmax(0,1fr) auto;
-    grid-template-areas:"mini nom pre" "mini dad go";column-gap:14px;}
-  .lin .mini{display:block;grid-area:mini;width:58px;height:44px;border-radius:var(--r-xs);
-    overflow:hidden;background:#0e0e11;align-self:center;}
-  .lin .mini img{width:100%;height:100%;object-fit:cover;}
-  .lin .ix{display:none;}
-  .lin .sel{left:72px;top:0;}
+  .lin{grid-template-columns:76px minmax(0,1fr);column-gap:13px;row-gap:5px;
+    grid-template-areas:"mini nom" "mini dad" "mini pre";align-items:center;}
+  .lin .mini{grid-area:mini;width:76px;height:76px;border-radius:var(--r-sm);align-self:center;}
+  .lin .mini b{right:4px;bottom:4px;font-size:.52rem;}
+  .lin .nom b{font-size:1.14rem;}
+  .lin .pre{grid-area:pre;display:flex;align-items:baseline;gap:9px;text-align:left;}
+  .lin .pre small{margin-bottom:0;}
+  .lin .pre b{font-size:1.06rem;
+    background:var(--flame);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;}
+  .lin .go{display:none;}
+  .lin .sel{left:89px;top:0;}
   .lin .dad{flex-wrap:wrap;gap:6px 12px;}
   .lin .dad span{font-size:.7rem;}
   .lin .dad span:nth-child(4){display:none;}  /* categoria já está no filtro */
@@ -853,6 +874,9 @@ body.m-dock .selo-marca{display:flex;}
   body.m-dock .topo{padding-top:clamp(96px,11vh,132px);}
   /* a etiqueta da foto não pode ficar atrás do dock */
   body.m-dock .capa-tag{bottom:88px;}
+  /* a barra de filtros gruda abaixo da cápsula, nunca atrás dela */
+  body.m-capsula .tools{top:76px;}
+  body.m-dock .tools{top:12px;}
 }
 @media (max-width:1080px){
   .pill-nav,.selo-marca{display:none!important;}
@@ -1527,7 +1551,8 @@ function linha(v, i){
       'data-n="' + ((v.g && v.g.length) || 0) + '" role="button" tabindex="0" ' +
       'aria-label="Ver ' + esc(v.b + " " + v.m) + '" style="--d:' + (Math.min(i,11) * 42) + 'ms">' +
     (v.f ? '<span class="sel">Destaque</span>' : '') +
-    '<span class="mini"><img src="' + fotoURL(v, 0) + '" alt="" loading="lazy"></span>' +
+    '<span class="mini"><img src="' + fotoURL(v, 0) + '" alt="' + esc(v.b + " " + v.m) + '" loading="lazy" decoding="async">' +
+      (((v.g && v.g.length) || 0) > 1 ? '<b>' + v.g.length + '</b>' : '') + '</span>' +
     '<span class="ix">' + String(i + 1).padStart(2, "0") + '</span>' +
     '<div class="nom"><b>' + esc(v.m) + '</b><em>' + esc(v.b) + '</em></div>' +
     '<div class="ver">' + esc(v.v) + '</div>' +
