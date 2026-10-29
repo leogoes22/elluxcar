@@ -1128,7 +1128,7 @@ function fotoURL(v, n){
 var CARROS = [];
 window.estoquePronto = (async function(){
   var controller = new AbortController();
-  var timer = setTimeout(function(){ controller.abort(); }, 15000);
+  var timer = setTimeout(function(){ controller.abort(); }, 45000);
   try {
     var response = await fetch("https://webhook.lv-mktdeconversa.com/webhook/elluxcar-estoque-site", {cache:"no-store", signal:controller.signal});
     if (!response.ok) throw new Error("Estoque indisponível");
@@ -1137,7 +1137,7 @@ window.estoquePronto = (async function(){
     CARROS = data.carros;
     window.CARROS = CARROS;
     document.querySelectorAll("[data-stock-total]").forEach(function(el){ el.textContent = CARROS.length; });
-    document.querySelectorAll("[data-stock-count]").forEach(function(el){ el.setAttribute("data-num", CARROS.length); });
+    document.querySelectorAll("[data-stock-count]").forEach(function(el){ el.setAttribute("data-num", CARROS.length); el.textContent = CARROS.length; });
     return CARROS;
   } catch(error) {
     console.error("Não foi possível consultar o estoque", error);
@@ -1154,8 +1154,6 @@ window.estoquePronto = (async function(){
 })();
 </script>
 <script>
-window.estoquePronto.then(function(){
-
 /* =========================================================
    EL LUXCAR NOVA IGUAÇU — núcleo
    ========================================================= */
@@ -1459,12 +1457,8 @@ else boot();
 
 })();
 
-
-}).catch(function(){});
 </script>
 <script>
-window.estoquePronto.then(function(){
-
 /* =========================================================
    EL LUXCAR — lista de veículos, prévia flutuante e filtros
    ========================================================= */
@@ -1715,12 +1709,8 @@ window.resumoMarcas = function(){
 
 })();
 
-
-}).catch(function(){});
 </script>
 <script>
-window.estoquePronto.then(function(){
-
 /* =========================================================
    EL LUXCAR — modal do veículo, galeria e partilha
    ========================================================= */
@@ -1984,17 +1974,17 @@ document.addEventListener("keydown", function(e){
 });
 
 function linkDireto(){
+  window.estoquePronto.then(function(){
   if (!document.getElementById("lista") && !document.getElementById("destaques")) return;
   var id = new URLSearchParams(location.search).get("v");
   if (id) setTimeout(function(){ abrir(id, true); }, 420);
+  }).catch(function(){});
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", linkDireto);
 else linkDireto();
 
 })();
 
-
-}).catch(function(){});
 </script>
 <script>
 window.estoquePronto.then(function(){
