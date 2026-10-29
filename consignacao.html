@@ -1121,131 +1121,38 @@ body.m-dock .pill-nav{padding-left:14px;}
 </main>
 
 <script>
-/* =========================================================
-   EL LUXCAR NOVA IGUAÇU — Estoque
-   Extraído do site oficial (elluxcarni.com.br),
-   plataforma AutoCerto — código da loja 7798.
-   Campos:  b=marca  m=modelo  v=versão  y=ano  ys=ano(num)
-            km=quilometragem  cam=câmbio  comb=combustível
-            portas=nº de portas  p=preço (0 = sob consulta)
-            t=categoria  f=destaque  id=código do veículo
-            g=galeria (nomes dos arquivos de foto)
-            op=opcionais  se=itens de série
-   Foto:    FOTO_BASE + id + "/" + nome + ".jpg"
-   ========================================================= */
-var FOTO_BASE = "https://www.autocerto.com/fotos/7798/";
-
-function fotoURL(v, n){
-  var nome = v.g && v.g[n || 0];
-  return nome ? (FOTO_BASE + v.id + "/" + nome + ".jpg") : "";
-}
-
-var CARROS = [
-
-/* ------------------------- SUV ------------------------- */
-{b:"Land Rover", m:"Range Rover Evoque", v:"2.0 HSE Dynamic 4WD 16V Gasolina 4p Automático", y:"2015/2016", ys:2016, km:0,
- cam:"Automático", comb:"Gasolina", portas:4, p:118990, t:"SUV", f:1, id:"5285899",
- g:["2_112946","5_112947","14_112947","1_112946","15_112947","6_112947","4_112947","13_112947","7_112947","3_112947","8_112947","11_112947","12_112947","16_112947","3_112946","17_112947"]},
-
-{b:"Toyota", m:"Hilux SW4", v:"3.0 SRV 4x4 7 Lugares 16V Turbo Intercooler Diesel 4p Automático", y:"2010", ys:2010, km:0,
- cam:"Automático", comb:"Diesel", portas:4, p:0, t:"SUV", f:1, id:"5405331",
- g:["3_041226","4_041226","5_041226","6_041226","7_041226","8_041226","9_041226","10_041226","11_041226","12_041226","13_041226","14_041226","15_041226","1_041226","16_041226","17_041226","18_041226","19_041226"]},
-
-{b:"Kia", m:"Sportage", v:"2.0 LX 4x2 16V Flex 4p Automático", y:"2012/2013", ys:2013, km:146313,
- cam:"Automático", comb:"Flex e GNV", portas:4, p:71990, t:"SUV", id:"5128100",
- g:["3_115527","1_115527","2_115527","4_115527"]},
-
-{b:"Ford", m:"EcoSport", v:"2.0 4WD 16V Flex 4p Manual", y:"2005", ys:2005, km:0,
- cam:"Manual", comb:"Gasolina", portas:4, p:29990, t:"SUV", id:"5133560",
- g:["6_115156","7_115156","1_115156","3_115156","4_115156","5_115156"]},
-
-/* ------------------------ PICAPE ----------------------- */
-{b:"Toyota", m:"Hilux", v:"2.7 SRV 4x2 CD 16V Flex 4p Automático", y:"2017", ys:2017, km:141407,
- cam:"Automático", comb:"Flex", portas:4, p:175990, t:"Picape", f:1, id:"5128464",
- g:["7_113308","5_113308","6_113308","8_113308","9_113308","16_113308","1_113308","15_113308","14_113308","2_113308","3_113308","12_113308","11_113308","17_113308","4_113308","18_113308","19_113308","20_113308","21_113308","22_113308","23_113308","24_113308","25_113308","10_113308","13_113308"]},
-
-{b:"Ford", m:"Ranger", v:"2.2 XLS 4x4 CD 16V Diesel 4p", y:"2016/2017", ys:2017, km:0,
- cam:"Automático", comb:"Diesel", portas:4, p:113990, t:"Picape", f:1, id:"5285862",
- g:["4_112559","5_112559","1_112559","6_112559","7_112559","9_112559"]},
-
-{b:"Fiat", m:"Toro", v:"1.8 16V EVO Flex Endurance AT6", y:"2019", ys:2019, km:121000,
- cam:"Automático", comb:"Flex", p:86990, t:"Picape", f:1, id:"5279641",
- g:["3_112326","1_112326","4_112326","5_112326","6_112326","7_112326","2_112326","8_112326"]},
-
-/* ------------------------- SEDÃ ------------------------ */
-{b:"Toyota", m:"Corolla", v:"1.8 VVT-i Hybrid Flex Altis Premium CVT", y:"2020/2021", ys:2021, km:0,
- cam:"CVT", comb:"Híbrido Flex", p:0, t:"Sedã", f:1, id:"5405484",
- g:["4_042030","5_042030","6_042030","1_042030","7_042030","8_042030","2_042030","9_042030","10_042030","3_042030"]},
-
-{b:"Volkswagen", m:"Virtus", v:"1.0 200 TSI Highline Automático", y:"2024/2025", ys:2025, km:28716,
- cam:"Automático", comb:"Flex", p:0, t:"Sedã", f:1, id:"5405264",
- g:["1_040841"]},
-
-{b:"Ford", m:"Ka Sedan", v:"1.0 Ti-VCT Flex SE Manual", y:"2019", ys:2019, km:155240,
- cam:"Manual", comb:"Flex", p:49999, t:"Sedã", id:"5133599",
- g:["1_115948","8_115948","6_115948","7_115948","5_115948"]},
-
-{b:"Fiat", m:"Siena", v:"1.0 MPI EL 8V Flex 4p Manual", y:"2013/2014", ys:2014, km:202022,
- cam:"Manual", comb:"Flex", portas:4, p:39990, t:"Sedã", id:"5128469",
- g:["6_113715","5_113715","1_113715","7_113715","8_113715","10_113715","11_113715","12_113715","13_113715","2_113715","9_113715","3_113715","14_113715","4_113715","16_113715","15_113715"]},
-
-/* ------------------------- HATCH ----------------------- */
-{b:"Volkswagen", m:"Polo", v:"1.0 MPI Track Manual", y:"2024/2025", ys:2025, km:55548,
- cam:"Manual", comb:"Álcool e GNV", p:80990, t:"Hatch", f:1, id:"5193219",
- g:["4_121316","3_121316","2_121316","8_121316","1_121316","6_121316","5_121316","9_121316"]},
-
-{b:"Chevrolet", m:"Onix", v:"1.0 Turbo Flex LTZ Automático", y:"2024/2025", ys:2025, km:0,
- cam:"Automático", comb:"Flex", p:0, t:"Hatch", id:"5406075",
- g:["1_045953","2_045953","3_045953","4_045953","5_045953"]},
-
-{b:"Chevrolet", m:"Onix", v:"1.0 Turbo Flex LTZ Manual", y:"2022/2023", ys:2023, km:79834,
- cam:"Manual", comb:"Flex", p:79900, t:"Hatch", id:"5186443",
- g:["4_115342","5_115342","3_115342","1_115342","2_115342"]},
-
-{b:"Chevrolet", m:"Onix", v:"1.0 Turbo Flex LT Automático", y:"2022/2023", ys:2023, km:0,
- cam:"Automático", comb:"Flex", p:0, t:"Hatch", id:"5405602",
- g:["7_042436","1_042436","8_042436","9_042436","2_042436","10_042436","11_042436","3_042436","12_042436","13_042436","4_042436","14_042436","15_042436","5_042436","16_042436","6_042436"]},
-
-{b:"Chevrolet", m:"Onix", v:"1.0 MPFI Joy 8V Flex 4p Manual", y:"2017/2018", ys:2018, km:110205,
- cam:"Manual", comb:"Flex", portas:4, p:51990, t:"Hatch", id:"5133717",
- g:["9_113400","11_113400","8_113400","10_113400","7_113400","6_113359","1_113359","17_113400","6_113400","2_113359","12_113400","13_113400","3_113359","14_113400","15_113400","4_113359","18_113400","16_113400","5_113359"],
- op:["Ar-condicionado","Ar quente","Direção elétrica","Multimídia","Entrada USB","Controle de som no volante","Computador de bordo","Rodas de liga leve","Freios ABS","Vidros elétricos","Vidros elétricos traseiros","Travas elétricas","Retrovisores elétricos","Volante com regulagem de altura","Airbag motorista","Airbag passageiro","Encosto de cabeça traseiro","Porta-copos","Para-choques na cor do veículo"],
- se:["IPVA pago","Licenciado"]},
-
-{b:"Hyundai", m:"HB20", v:"1.0 Comfort 12V Flex 4p Manual", y:"2019", ys:2019, km:0,
- cam:"Manual", comb:"Flex", portas:4, p:0, t:"Hatch", id:"5406118",
- g:["1_050331","2_050331","3_050331","4_050331","5_050331","6_050331"]},
-
-{b:"Ford", m:"Ka", v:"1.0 Ti-VCT Flex SE Plus Manual", y:"2017/2018", ys:2018, km:198918,
- cam:"Manual", comb:"Flex", p:46990, t:"Hatch", id:"5157354",
- g:["1_044420","2_044420","3_044420","4_044420"]},
-
-{b:"Fiat", m:"Mobi", v:"1.0 EVO Flex Like Manual", y:"2021", ys:2021, km:0,
- cam:"Manual", comb:"Flex", p:0, t:"Hatch", id:"5405649",
- g:["2_042855","3_042855","4_042855","5_042855","6_042855","7_042855","8_042855","9_042855","1_042855","10_042855"]},
-
-/* ------------------------ MINIVAN ---------------------- */
-{b:"Chevrolet", m:"Meriva", v:"1.8 MPFI Joy 8V Flex 4p Manual", y:"2004/2005", ys:2005, km:0,
- cam:"Manual", comb:"Flex", portas:4, p:0, t:"Minivan", id:"5406188",
- g:["1_050949","2_050949","3_050949","4_050949","5_050949","6_050949","7_050949","8_050949","9_050949","10_050949"]},
-
-/* ----------------------- CLÁSSICO ---------------------- */
-{b:"Chevrolet", m:"Caravan", v:"2.5 Comodoro SL/E 8V Álcool 2p Manual", y:"1989/1990", ys:1990, km:224105,
- cam:"Manual", comb:"Álcool", portas:2, p:51990, t:"Clássico", f:1, id:"5133725",
- g:["10_112329","1_112329","8_112329","9_112329","12_112329","15_112329","13_112329","4_112329","3_112329","14_112329","6_112329","16_112329","17_112329","7_112329","18_112329","2_112329","5_112329","11_112329"]},
-
-/* ------------------------- MOTO ------------------------ */
-{b:"Honda", m:"CG 160 Fan", v:"CG 160 Fan", y:"2025/2026", ys:2026, km:0,
- cam:"Manual", comb:"Flex", p:24990, t:"Moto", id:"5300065",
- g:["2_095941","3_095941","4_095941","5_095941","1_095941","6_095941"]},
-
-{b:"Honda", m:"Biz 125 ES", v:"Biz 125 ES", y:"2013", ys:2013, km:14298,
- cam:"Manual", comb:"Flex", p:11313, t:"Moto", id:"5133704",
- g:["2_121950","3_121950","4_121950","5_121950","1_121950"]}
-];
-
+/* Estoque sincronizado pelo n8n; credenciais ficam somente no servidor. */
+var CARROS = [];
+window.estoquePronto = (async function(){
+  var controller = new AbortController();
+  var timer = setTimeout(function(){ controller.abort(); }, 15000);
+  try {
+    var response = await fetch("https://webhook.lv-mktdeconversa.com/webhook/elluxcar-estoque-site", {cache:"no-store", signal:controller.signal});
+    if (!response.ok) throw new Error("Estoque indisponível");
+    var data = await response.json();
+    if (!data || !Array.isArray(data.carros) || !data.carros.every(function(v){ return v && v.id && typeof v.b === "string" && typeof v.m === "string" && Array.isArray(v.g); })) throw new Error("Catálogo inválido");
+    CARROS = data.carros;
+    window.CARROS = CARROS;
+    document.querySelectorAll("[data-stock-total]").forEach(function(el){ el.textContent = CARROS.length; });
+    document.querySelectorAll("[data-stock-count]").forEach(function(el){ el.setAttribute("data-num", CARROS.length); });
+    return CARROS;
+  } catch(error) {
+    console.error("Não foi possível consultar o estoque", error);
+    var notice = document.createElement("p");
+    notice.setAttribute("role","alert");
+    notice.style.cssText="padding:24px;color:#f0eeea;background:#17171c;text-align:center";
+    notice.textContent = "Não foi possível carregar o estoque agora. Atualize a página ou consulte nossa equipe pelo WhatsApp.";
+    var target = document.getElementById("lista") || document.getElementById("destaques") || document.querySelector("main");
+    if (target) target.prepend(notice);
+    var loading = document.querySelector(".loader");
+    if (loading) loading.classList.add("done");
+    throw error;
+  } finally { clearTimeout(timer); }
+})();
 </script>
 <script>
+window.estoquePronto.then(function(){
+
 /* =========================================================
    EL LUXCAR NOVA IGUAÇU — núcleo
    ========================================================= */
@@ -1549,8 +1456,12 @@ else boot();
 
 })();
 
+
+}).catch(function(){});
 </script>
 <script>
+window.estoquePronto.then(function(){
+
 /* =========================================================
    EL LUXCAR — lista de veículos, prévia flutuante e filtros
    ========================================================= */
@@ -1801,8 +1712,12 @@ window.resumoMarcas = function(){
 
 })();
 
+
+}).catch(function(){});
 </script>
 <script>
+window.estoquePronto.then(function(){
+
 /* =========================================================
    EL LUXCAR — modal do veículo, galeria e partilha
    ========================================================= */
@@ -2075,8 +1990,12 @@ else linkDireto();
 
 })();
 
+
+}).catch(function(){});
 </script>
 <script>
+window.estoquePronto.then(function(){
+
 
 window.montarForm("formCons", function(d){
   var l = ["*QUERO VENDER MEU VEÍCULO — site El Luxcar*", ""];
@@ -2094,6 +2013,8 @@ window.montarFAQ("pergC", "respC", [
   ["Como recebo o dinheiro?", "Por transferência bancária, após a venda concluída e a transferência de propriedade registrada. Toda a documentação passa pela nossa equipe."]
 ]);
 
+
+}).catch(function(){});
 </script>
 </body>
 </html>
