@@ -1122,6 +1122,11 @@ body.m-dock .pill-nav{padding-left:14px;}
 
 <script>
 /* Estoque sincronizado pelo n8n; credenciais ficam somente no servidor. */
+var FOTO_BASE = "https://www.autocerto.com/fotos/7798/";
+function fotoURL(v, n){
+  var nome = v.g && v.g[n || 0];
+  return nome ? (FOTO_BASE + v.id + "/" + nome + ".jpg") : "";
+}
 var CARROS = [];
 window.estoquePronto = (async function(){
   var controller = new AbortController();
