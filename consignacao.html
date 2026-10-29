@@ -2,6 +2,42 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>
+/* Estoque público: consulta antecipada e cache validado de até 60 segundos. */
+var FOTO_BASE = "https://www.autocerto.com/fotos/7798/";
+function fotoURL(v, n){
+  var nome = v.g && v.g[n || 0];
+  return nome ? (FOTO_BASE + v.id + "/" + nome + ".jpg") : "";
+}
+var CARROS = [];
+window.estoquePronto = (async function(){
+  var key = "elluxcar:estoque:v2", ttl = 60000;
+  function validar(data){
+    return data && Array.isArray(data.carros) &&
+      Number.isInteger(data.total) && data.total === data.carros.length &&
+      new Set(data.carros.map(function(v){ return v && v.id; })).size === data.carros.length &&
+      data.carros.every(function(v){ return v && v.id && typeof v.b === "string" && typeof v.m === "string" && Array.isArray(v.g); });
+  }
+  function aplicar(data){ CARROS = data.carros; window.CARROS = CARROS; return CARROS; }
+  try {
+    var saved = JSON.parse(localStorage.getItem(key));
+    var age = saved && Date.now() - saved.at;
+    if (saved && age >= 0 && age < ttl && validar(saved.data)) return aplicar(saved.data);
+  } catch(e) { /* Navegação privada ou cache inválido: consultar o servidor. */ }
+  var controller = new AbortController();
+  var timer = setTimeout(function(){ controller.abort(); }, 45000);
+  try {
+    var response = await fetch("https://webhook.lv-mktdeconversa.com/webhook/elluxcar-estoque-site", {cache:"no-store", signal:controller.signal});
+    if (!response.ok) throw new Error("Estoque indisponível");
+    var data = await response.json();
+    if (!validar(data)) throw new Error("Catálogo incompleto ou inválido");
+    try { localStorage.setItem(key, JSON.stringify({at:Date.now(),data:data})); } catch(e) {}
+    return aplicar(data);
+  } finally { clearTimeout(timer); }
+})();
+/* O tratamento visual é instalado depois que o corpo da página existir. */
+window.estoquePronto.catch(function(){});
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Venda seu carro — El Luxcar Nova Iguaçu</title>
 <meta name="description" content="Venda, troque ou deixe seu veículo em consignação na El Luxcar, na Rod. Presidente Dutra, Nova Iguaçu. Avaliação sem compromisso e pagamento seguro.">
@@ -1121,39 +1157,22 @@ body.m-dock .pill-nav{padding-left:14px;}
 </main>
 
 <script>
-/* Estoque sincronizado pelo n8n; credenciais ficam somente no servidor. */
-var FOTO_BASE = "https://www.autocerto.com/fotos/7798/";
-function fotoURL(v, n){
-  var nome = v.g && v.g[n || 0];
-  return nome ? (FOTO_BASE + v.id + "/" + nome + ".jpg") : "";
-}
-var CARROS = [];
-window.estoquePronto = (async function(){
-  var controller = new AbortController();
-  var timer = setTimeout(function(){ controller.abort(); }, 45000);
-  try {
-    var response = await fetch("https://webhook.lv-mktdeconversa.com/webhook/elluxcar-estoque-site", {cache:"no-store", signal:controller.signal});
-    if (!response.ok) throw new Error("Estoque indisponível");
-    var data = await response.json();
-    if (!data || !Array.isArray(data.carros) || !data.carros.every(function(v){ return v && v.id && typeof v.b === "string" && typeof v.m === "string" && Array.isArray(v.g); })) throw new Error("Catálogo inválido");
-    CARROS = data.carros;
-    window.CARROS = CARROS;
-    document.querySelectorAll("[data-stock-total]").forEach(function(el){ el.textContent = CARROS.length; });
-    document.querySelectorAll("[data-stock-count]").forEach(function(el){ el.setAttribute("data-num", CARROS.length); el.textContent = CARROS.length; });
-    return CARROS;
-  } catch(error) {
-    console.error("Não foi possível consultar o estoque", error);
-    var notice = document.createElement("p");
-    notice.setAttribute("role","alert");
-    notice.style.cssText="padding:24px;color:#f0eeea;background:#17171c;text-align:center";
-    notice.textContent = "Não foi possível carregar o estoque agora. Atualize a página ou consulte nossa equipe pelo WhatsApp.";
-    var target = document.getElementById("lista") || document.getElementById("destaques") || document.querySelector("main");
-    if (target) target.prepend(notice);
-    var loading = document.querySelector(".loader");
-    if (loading) loading.classList.add("done");
-    throw error;
-  } finally { clearTimeout(timer); }
-})();
+window.estoquePronto.then(function(){
+  document.querySelectorAll("[data-stock-total], [data-stock-count]").forEach(function(el){ el.textContent = CARROS.length; });
+  document.querySelectorAll("[data-stock-loading]").forEach(function(el){ el.remove(); });
+  document.querySelectorAll("[aria-busy='true']").forEach(function(el){ el.removeAttribute("aria-busy"); });
+}).catch(function(error){
+  console.error("Não foi possível consultar o estoque", error);
+  document.querySelectorAll("[data-stock-loading]").forEach(function(el){ el.remove(); });
+  var notice = document.createElement("p");
+  notice.setAttribute("role","alert");
+  notice.style.cssText="padding:24px;color:#f0eeea;background:#17171c;text-align:center";
+  notice.textContent = "Não foi possível carregar o estoque agora. Atualize a página ou consulte nossa equipe pelo WhatsApp.";
+  var target = document.getElementById("lista") || document.getElementById("destaques") || document.querySelector("main");
+  if (target) target.prepend(notice);
+  var loading = document.querySelector(".loader");
+  if (loading) loading.classList.add("done");
+});
 </script>
 <script>
 /* =========================================================
